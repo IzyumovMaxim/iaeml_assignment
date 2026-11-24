@@ -130,6 +130,8 @@ On map 0 it reaches the goal with return about 29 in 174 steps (11.6 s): [media/
 
 On map 1 it crashes into the moving obstacle, because the controller does not see it: [media/pursuit_map1.mp4](../media/pursuit_map1.mp4). This is the motivation for RL in Assignment 2.
 
+On map 2, pure pursuit also collides with a moving obstacle: [media/pursuit_map2.mp4](../media/pursuit_map2.mp4).
+
 To reproduce on macOS or Linux with Python 3.11 or newer:
 
 ```bash
