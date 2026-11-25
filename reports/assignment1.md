@@ -21,11 +21,11 @@ I use a dynamic bicycle model with a linear tyre model and friction saturation.
 Slip angles of the front and rear axles use $v_{\mathrm{safe}} = \max(|v_x|, 0.5)$, with velocities measured in m/s:
 
 $$
-\alpha_f = \delta - \operatorname{atan2}(v_y + l_f r, v_{\mathrm{safe}})
+\alpha_f = \delta - \arctan\frac{v_y + l_f r}{v_{\mathrm{safe}}}
 $$
 
 $$
-\alpha_r = -\operatorname{atan2}(v_y - l_r r, v_{\mathrm{safe}})
+\alpha_r = -\arctan\frac{v_y - l_r r}{v_{\mathrm{safe}}}
 $$
 
 Lateral tyre forces are linear in the slip angle and limited by friction:
