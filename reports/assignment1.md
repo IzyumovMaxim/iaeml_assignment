@@ -101,7 +101,7 @@ The global path is built once in init_params with Dijkstra search on the 8-conne
 ## 3. Reward function
 
 $$
-R_t = 1.0\,\Delta s_t - 0.02 \min(d_t^2,\ 4) - 0.01 - 0.01 \lVert a_t - a_{t-1} \rVert^2 + 10 \cdot [\text{goal}] - 10 \cdot [\text{crash}]
+R_t = 1.0 \cdot \Delta s_t - 0.02 \min(d_t^2, 4) - 0.01 - 0.01 \lVert a_t - a_{t-1} \rVert^2 + 10 \cdot [\text{goal}] - 10 \cdot [\text{crash}]
 $$
 
 The first term $\Delta s_t$ is the increase of the arc length of the projection of the agent onto the path. It gives the agent a signal at every step based on how far it moves along the route. Over the whole path of about 22 m the agent collects about 22, which is the same order as the goal bonus.
