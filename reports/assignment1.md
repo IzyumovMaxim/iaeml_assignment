@@ -18,14 +18,14 @@ One map cell is 1 m. The agent is a small robotaxi with mass $m = 150$ kg, dista
 
 I use a dynamic bicycle model with a linear tyre model and friction saturation.
 
-Slip angles of the front and rear axle:
+Slip angles of the front and rear axles use $v_{\mathrm{safe}} = \max(|v_x|, 0.5)$, with velocities measured in m/s:
 
 $$
-\alpha_f = \delta - \arctan\frac{v_y + l_f r}{v_x}
+\alpha_f = \delta - \operatorname{atan2}(v_y + l_f r, v_{\mathrm{safe}})
 $$
 
 $$
-\alpha_r = -\arctan\frac{v_y - l_r r}{v_x}
+\alpha_r = -\operatorname{atan2}(v_y - l_r r, v_{\mathrm{safe}})
 $$
 
 Lateral tyre forces are linear in the slip angle and limited by friction:
@@ -72,7 +72,7 @@ $$
 \dot\delta = \mathrm{clip}\left(\frac{\delta_{cmd} - \delta}{0.1},\ -2,\ 2\right) \ \text{rad/s}
 $$
 
-At low speed the slip angles are undefined because of the division by $v_x$, and the dynamic model becomes singular. Therefore at low speed it is smoothly blended with the kinematic bicycle model, where $v_y = v_x \tan\delta \cdot l_r / L$ and $r = v_x \tan\delta / L$:
+Near standstill the slip-angle calculation is sensitive to small changes in $v_x$. The lower bound on $v_{\mathrm{safe}}$ keeps the calculation well defined, and at low speed the dynamic model is smoothly blended with the kinematic bicycle model, where $v_y = v_x \tan\delta \cdot l_r / L$ and $r = v_x \tan\delta / L$:
 
 $$
 \lambda = \mathrm{clip}\left(\frac{v_x - 0.5}{1.5 - 0.5},\ 0,\ 1\right), \qquad x = \lambda x_{dyn} + (1 - \lambda) x_{kin}

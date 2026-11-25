@@ -29,8 +29,10 @@ $$
 $$
 
 $$
-\hat A_t = \sum_{l \ge 0} (\gamma\lambda)^l \delta_{t+l}
+\hat A_t = \delta_t + \gamma\lambda (1 - d_t) \hat A_{t+1}
 $$
+
+The recurrence runs backwards over the rollout with $\hat A_T = 0$. The flag $d_t$ is 1 when step $t$ ends the episode and 0 otherwise. On a terminal step, $\hat A_t = \delta_t$.
 
 Third, several epochs of SGD over minibatches maximise the clipped surrogate objective:
 
