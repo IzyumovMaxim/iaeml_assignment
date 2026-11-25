@@ -103,7 +103,7 @@ For comparison, pure pursuit without obstacle avoidance reaches the goal on map 
 
 Map 2 is harder than maps 0 and 1. The route is longer (9.6 s to the goal against 5.4 s), and it has to cross moving obstacles twice. The vertical column crosses the path, and the goal lies in a pocket that can only be entered through the horizontal row (hhhh). This row wraps around the edge of the map and also passes through the start area.
 
-With the baseline setup, none of the 256 evaluation episodes reached the goal. Of those, 243 (94.9%) timed out and 13 (5.1%) ended in a crash. In the episodes that timed out, the median distance travelled over the final 10 seconds was 0.92 m. With an entropy bonus (`--ent-coef 0.01`) and 20M training steps, all 256 evaluation episodes timed out.
+With the baseline setup, none of the 256 evaluation episodes reached the goal. Of those, 243 (94.9%) timed out and 13 (5.1%) ended in a crash. In the episodes that timed out, the median distance travelled over the final 10 seconds was 0.92 m. With an entropy bonus averaged over the minibatch (`--ent-coef 0.01`) and 20M training steps, all 256 evaluation episodes timed out. The mean episode return was -4.41.
 
 To find out what was missing I trained three more variants on map 2, each for 10M steps, and evaluated them from the real start cell:
 
@@ -116,7 +116,7 @@ To find out what was missing I trained three more variants on map 2, each for 10
 
 Both variants with the start curriculum reached the goal in all 256 evaluation episodes. Starting from waypoints along the route gave the agent more opportunities to reach the goal during training. The timeout penalty alone produced no successful episodes, and combining it with the curriculum gave the same success rate as the curriculum alone. The final checkpoint uses only the start curriculum.
 
-None of the agents generalises to another map. Each policy crashes on the maps it was not trained on, except that the map 0 policy also works on map 1, which has a similar geometry.
+Of the six transfers between different maps, only the policy trained on map 0 reached the goal on a new map. It succeeded in all 256 episodes on map 1. The other five transfers ended in crashes in every episode.
 
 Videos:
 

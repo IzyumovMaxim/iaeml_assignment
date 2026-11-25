@@ -213,7 +213,7 @@ def make_train(cfg: PPOConfig):
             actor_loss = -jnp.minimum(
                 ratio * adv, jnp.clip(ratio, 1 - cfg.clip_eps, 1 + cfg.clip_eps) * adv
             ).mean()
-            entropy = jnp.sum(log_std + 0.5 * jnp.log(2 * jnp.pi * jnp.e))
+            entropy = jnp.sum(log_std + 0.5 * jnp.log(2 * jnp.pi * jnp.e), axis=-1).mean()
 
             total = actor_loss + cfg.vf_coef * value_loss - cfg.ent_coef * entropy
             approx_kl = ((ratio - 1) - jnp.log(ratio)).mean()
