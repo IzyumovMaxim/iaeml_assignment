@@ -104,13 +104,13 @@ $$
 R_t = 1.0 \cdot \Delta s_t - 0.02 \min(d_t^2, 4) - 0.01 - 0.01 \lVert a_t - a_{t-1} \rVert^2 + 10 \cdot [\text{goal}] - 10 \cdot [\text{crash}]
 $$
 
-The first term $\Delta s_t$ is the increase of the arc length of the projection of the agent onto the path. It gives the agent a signal at every step based on how far it moves along the route. Over the whole path of about 22 m the agent collects about 22, which is the same order as the goal bonus.
+The first term ($1.0 \cdot \Delta s_t$) is the increase of the arc length of the projection of the agent onto the path. It gives the agent a signal at every step based on how far it moves along the route. Over the whole path of about 22 m the agent collects about 22, which is the same order as the goal bonus.
 
-The second term penalises deviation from the path. It is small and capped, because the agent must be allowed to leave the path to go around a moving obstacle.
+The second term ($-0.02 \min(d_t^2, 4)$) penalises deviation from the path. It is small and capped, because the agent must be allowed to leave the path to go around a moving obstacle.
 
-The third term is a time penalty that makes the agent drive instead of standing still. Standing for 450 steps costs -4.5, which is less in absolute value than a crash (-10). So standing still to avoid a crash is worse than reaching the goal (+10 +22).
+The third term ($-0.01$) is a time penalty that makes the agent drive instead of standing still. Standing for 450 steps costs -4.5, which is less in absolute value than a crash (-10). So standing still to avoid a crash is worse than reaching the goal (+10 +22).
 
-The fourth term penalises changes of the action and removes steering chatter.
+The fourth term ($-0.01 \lVert a_t - a_{t-1} \rVert^2$) penalises changes of the action and removes steering chatter.
 
 A crash is a collision with a static or moving obstacle (the distance threshold from BaseEnv._check_collisions) or leaving the map. Map 2 has a gap in the wall, so leaving the map is possible there.
 
