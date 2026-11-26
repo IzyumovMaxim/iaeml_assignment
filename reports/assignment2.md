@@ -81,13 +81,13 @@ The end-to-end training speed, including the network and the update, is about 70
 
 ## 3. Difficulties and reflection
 
-**Early training on map 0.** In the first rollout, every completed episode ended in a crash. The car starts close to a wall, so I tested a small reverse command and a full reverse command with the steering centered. Both caused a collision on the first step. Around 400,000 training steps, episodes were lasting much longer, but none of the episodes completed in that rollout reached the goal. By about one million steps, roughly 97% of completed episodes reached it. Looking at episode length and success together made it easier to see when the agent started completing the route.
+**Early training.** In the first rollout, every completed episode ended in a crash, mostly because on all maps the car starts very close to a wall, so every backward move results in a crash. So firstly agent has to learn not to move backwards. On map 0, around 400,000 training steps, episodes were lasting much longer, but none of the episodes completed in that rollout reached the goal. By about one million steps, roughly 97% of completed episodes reached it. So looking at episode length and success together made it easier to see when the agent started completing the route.
 
-**Exploration on map 2.** The baseline policy usually ran out of time, and adding a timeout penalty did not improve its success rate. I changed the training setup so that each episode had a 50% chance of starting at a random waypoint along the route. This gave the agent more opportunities to reach the goal during training. The final policy reached the goal in all 256 evaluation episodes from the original starting cell.
+**Exploration on map 2.** The baseline policy usually ran out of time, agent just stayed still. This happens due to reward, in this map obstacles are directly before agent 2 times so during rollouts it crashed almost every time it tried to drive, with our reward standing still will give less penalty than crashing so agent just stands. Adding a timeout penalty did not improve its success rate because then with the reward less penalty is for crashing (crashes went up from 5% to 12%) which clearly does not make it any better. I changed the training setup so that each episode had a 50% chance of starting at a random waypoint along the route. This gave the agent more opportunities to reach the goal during training so agent was given a clue that final goal even can be reached. The final policy reached the goal in all 256 evaluation episodes from the original starting cell.
 
-**Transfer to a different map.** I evaluated the policy trained on map 0 on map 2. It crashed in all 256 episodes. That made it clear that a high success rate on the training map gave me little information about how the policy would handle this different layout.
+**Transfer to a different map.** Also as an interesting generalisation test I evaluated the policy trained each map on another. The only checkpoint that generalised was trained on map 0, it also passed map 1 which is probably because they are very similar. That made it clear that a high success rate on the training map gave me little information about how the policy would handle a different layout.
 
-**Obstacle timing on map 1.** The moving obstacles normally start in the same positions, so I checked how the policy handled a change in their timing. I shifted their starting positions along their usual trajectories by the equivalent of 0.5, 1, and 2 seconds. The policy reached the goal in all 256 episodes at each tested offset. This check covered changes in starting position while keeping the obstacle speeds and trajectories fixed.
+**Obstacle timing on map 1.** As one more experiment: the moving obstacles normally start in the same positions, so I checked how the policy handled a change in their timing. I shifted their starting positions along their usual trajectories by the equivalent of 0.5, 1, and 2 seconds. The policy reached the goal in all 256 episodes at each tested offset, the car starts crashing at around 5 seconds. This check covered changes in starting position while keeping the obstacle speeds and trajectories fixed.
 
 ## 4. Results and reproduction
 
@@ -164,5 +164,13 @@ python src/train.py --map-id 2 --total-timesteps 20000000 --num-envs 128 --ent-c
 python src/evaluate.py checkpoints/ppo_map2.eqx
 for variant in baseline timeout curriculum_timeout entropy; do
     python src/evaluate.py "checkpoints/map2_${variant}/ppo_map2.eqx"
+done
+```
+
+To reproduce the obstacle timing check on map 1, shift the moving obstacles along their trajectories by a given number of seconds:
+
+```bash
+for offset in 0.5 1 2 3 5; do
+    python src/evaluate.py checkpoints/ppo_map1.eqx --obstacle-offset $offset
 done
 ```
