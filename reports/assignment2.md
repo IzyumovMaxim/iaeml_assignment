@@ -87,7 +87,7 @@ The end-to-end training speed, including the network and the update, is about 70
 
 **Transfer to a different map.** Also as an interesting generalisation test I evaluated the policy trained each map on another. The only checkpoint that generalised was trained on map 0, it also passed map 1 which is probably because they are very similar. That made it clear that a high success rate on the training map gave me little information about how the policy would handle a different layout.
 
-**Obstacle timing on map 1.** As one more experiment: the moving obstacles normally start in the same positions, so I checked how the policy handled a change in their timing. I shifted their starting positions along their usual trajectories by the equivalent of 0.5, 1, and 2 seconds. The policy reached the goal in all 256 episodes at each tested offset, the car starts crashing at around 5 seconds. This check covered changes in starting position while keeping the obstacle speeds and trajectories fixed.
+**Obstacle timing on map 1.** As one more experiment: the moving obstacles normally start in the same positions, so I checked how the policy handled a change in their timing. I shifted their starting positions along their usual trajectories by the equivalent of 0.5, 1, and 2 seconds. The policy reached the goal in all 256 episodes at each tested offset, the car starts crashing between 3 and 4 seconds. This check covered changes in starting position while keeping the obstacle speeds and trajectories fixed.
 
 ## 4. Results and reproduction
 
@@ -170,7 +170,7 @@ done
 To reproduce the obstacle timing check on map 1, shift the moving obstacles along their trajectories by a given number of seconds:
 
 ```bash
-for offset in 0.5 1 2 3 5; do
+for offset in 0.5 1 2 3 4 5; do
     python src/evaluate.py checkpoints/ppo_map1.eqx --obstacle-offset $offset
 done
 ```
