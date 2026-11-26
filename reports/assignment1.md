@@ -122,7 +122,12 @@ An episode ends when the goal is reached, after a crash, or after max_steps. Unl
 
 The default planner sometimes cut corners next to walls. I changed the planner to block those diagonal moves and assign a higher cost to cells close to walls. To see how much this mattered in practice, I ran both routes on map 0 with the same vehicle dynamics, starting state, and pure pursuit controller. With the default route, the car hit a wall after 40 steps. With the new route, it reached the goal after 174 steps.
 
-Near standstill, the slip-angle equations are sensitive to small changes in longitudinal speed. I used the kinematic bicycle model in reverse and at forward speeds up to 0.5 m/s. Between 0.5 and 1.5 m/s, I gradually increased the weight of the dynamic model. From 1.5 m/s onward, the update uses the dynamic model alone.
+When I compared my model with the initial version that used only the dynamic model, I found a couple of bugs:
+
+1. If the car stands still and you press A and D one after another quickly, the car turns in place, which real cars do not do
+2. If you press S+A or S+D, the car turns in the wrong direction, as if the steering were inverted in reverse
+
+The first bug turns out to happen because near standstill the slip-angle equations are sensitive to small changes in longitudinal speed. The second one happens because the slip angle is computed with $|v_x|$, so the formula always assumes that the car moves forward. The kinematic model fixes both: the yaw rate is $r = v_x \tan\delta / L$, so it is zero when the car stands still and changes sign in reverse. I used the kinematic bicycle model in reverse and at forward speeds up to 0.5 m/s. Between 0.5 and 1.5 m/s, I gradually increased the weight of the dynamic model. From 1.5 m/s onward, the update uses the dynamic model alone.
 
 ## 5. Results and reproduction
 
